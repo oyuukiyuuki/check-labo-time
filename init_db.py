@@ -14,7 +14,6 @@ user1 = User(
     nfc_id="3333ffff",
 )
 db.session.add(user1)
-# db.session.commit()
 
 # db.create_all()
 # time1 = CheckTime(
