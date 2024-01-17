@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link href="/static/css/signin.css" rel="stylesheet">
+
+{% endblock head %}
+
+{% block content %}
+    <!-- <section id="login">
+        <div class="container my-5">
+            <div class="row">
+                <div class="col-lg-4 col-md-5 col-sm-6 mx-auto">
+                    <div class="card bg-primary text-center">
+                        <div class="card-body text-light">
+                            <h3>ログイン</h3>
+                            <form method="POST">
+                                {{ form.hidden_tag() }}
+                                <div class="mb-3">
+                                    {{ render_field(form.email, class='form-control form-control-lg', placeholder='メールアドレス') }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ render_field(form.password, class='form-control form-control-lg', placeholder='パスワード') }}
+                                </div>
+                                {{ form.submit(class="btn btn-outline-light w-100 ", value='ログイン') }}
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section> -->
+
+
+    <main class="form-signin w-100 m-auto">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+          <h1 class="h3 mb-4 fw-normal text-center">ユーザログイン</h1>
+      
+          <div class="form-floating">
+            <input type="email" class="form-control"  id="email" name="email"  required type="text" value="" placeholder="name@example.com">
+            <label for="floatingInput">Email address</label>
+          </div>
+          <div class="form-floating">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required type="password" value="" >
+            <label for="floatingPassword">Password</label>
+          </div>
+          {{ form.submit(class="btn btn-primary w-100 py-2 mb-3", value='ログイン') }}
+        </form>
+      </main>
+    
+{% endblock content %}

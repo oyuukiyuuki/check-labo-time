@@ -1,0 +1,36 @@
+.sample-table {
+    border-collapse: collapse;
+    border: 1px solid #000;
+    width: 80%;
+  }
+  
+  .sample-th {
+    border: 1px solid #000;
+    background: #ffbb1e;
+    padding: 20px;
+    width: 100px; /* 例: 正方形のサイズを指定 */
+    height: 50px; 
+  }
+  
+  .sample-td {
+    border: 1px solid #000;
+    padding: 20px;
+    width: 100px; /* 例: 正方形のサイズを指定 */
+    height: 50px; 
+  }
+
+  .grade-th{
+    width: 50px;
+  }
+
+  .grade-td{
+    width: 50px;
+  }
+
+  .status-th{
+    width: 70px;
+  }
+
+  .status-td{
+    width: 70px;
+  }

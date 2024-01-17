@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block head %}
+<link href="/static/css/state_list.css" rel="stylesheet">
+{% endblock head %}
+
+{% block script  %}
+      <script>
+        function submitForm(status) {
+            // 送信するJSONデータ
+            const jsonData = {
+                user_id: 1,
+                status: status
+                // 他のキーと値を必要に応じて追加
+            };
+
+            // 送信先のURL
+            // const url = 'https://testtttttt-e00622288aaa.herokuapp.com/regist_time';
+            const url = 'http://127.0.0.1:5000/regist_time';
+
+
+            // XMLHttpRequestオブジェクトを作成
+            const xhr = new XMLHttpRequest();
+
+            // POSTメソッドでリクエストを送信
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            // リクエストが完了した際の処理
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                // 成功した場合、レスポンスをHTML内に表示
+                var response_data = JSON.parse(xhr.responseText)
+                document.getElementById('response').innerHTML = response_data['message'];
+                } else {
+                // エラーが発生した場合の処理
+                document.getElementById('response').innerHTML = 'エラー: ' + xhr.status;
+                }
+            };
+
+            // エラーハンドリング（新たに追加）
+            xhr.onerror = function () {
+                document.getElementById('response').innerHTML = 'ネットワークエラーが発生しました';
+            };            
+
+            // リクエストを送信
+            xhr.send(JSON.stringify(jsonData));
+            }    
+</script>
+{% endblock script %}
+
+{% block content %}
+      <table class="sample-table mx-auto">
+        <tr>
+          <th class="sample-th text-center grade-th">学年</th>
+          <th class="sample-th text-center">名前</th>
+          <th class="sample-th text-center status-th">在室</th>
+          <th class="sample-th text-center status-th">ゼミ</th>
+          <th class="sample-th text-center status-th">講義</th>
+          <th class="sample-th text-center status-th">会議</th>
+          <th class="sample-th text-center status-th">外出</th>
+          <th class="sample-th text-center status-th">出張</th>
+          <th class="sample-th text-center status-th">帰宅</th>
+        </tr>
+        {% for user, status in user_list | zip(state_list) %}
+        <tr>
+          <td class="sample-td text-center grade-td">{{ user.grade }}</td>
+          <td class="sample-td">{{ user.username }}</td>
+          <td class="sample-td status-td {{ color_to_userstate(status, 0) }}">　</td>
+          <td class="sample-td status-td {{ color_to_userstate(status, 1) }}">　</td>
+          <td class="sample-td status-td {{ color_to_userstate(status, 2) }}">　</td>
+          <td class="sample-td status-td {{ color_to_userstate(status, 3) }}">　</td>
+          <td class="sample-td status-td {{ color_to_userstate(status, 4) }}">　</td>
+          <td class="sample-td status-td {{ color_to_userstate(status, 5) }}">　</td>
+          <td class="sample-td status-td {{ color_to_userstate(status, 6) }}">　</td>
+        </tr>
+        {% endfor %}
+      </table>
+
+{% endblock content %}

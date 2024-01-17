@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section id="munu">
+    <div class="container my-3 py-4 bg-light">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="{{  url_for('main.state_list') }}" class="btn btn-secondary w-100">メインページに戻る</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<header id="page-header">
+    <div class="container my-3 py-3 bg-light">
+        <h1>ページが見つかりません</h1>
+        <p>
+            すでに削除されたか、アドレスが間違っている可能性がございます。
+        </p>
+    </div>
+</header>
+{% endblock %}
