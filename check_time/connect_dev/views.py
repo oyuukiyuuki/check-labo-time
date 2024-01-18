@@ -28,21 +28,23 @@ device = Blueprint("device", __name__)
 #     return render_template("users/register.html")
 
 
-@device.route("/regist_user", methods=["POST"])
+@device.route("/api/signup", methods=["POST"])
 @cross_origin(origins=["http://127.0.0.1:5500"], methods=["POST"])
-def regist_user():
+def signup():
+    error_flag = False
     user_data = request.get_json()
+    message = ""
     if User.query.filter_by(username=user_data["username"]).first():
-        response = {"message": "入力されたユーザ名はすでに使われてます"}
-        return response, 400
+        error_flag = True
+        message = "入力されたユーザ名はすでに使われてます\n"
     if User.query.filter_by(email=user_data["email"]).first():
-        response = {"message": "入力されたメールアドレスはすでに使われてます"}
-        return response, 400
+        error_flag = True
+        message += "入力されたメールアドレスはすでに使われてます\n"
     if User.query.filter_by(nfc_id=user_data["nfc_id"]).first():
-        response = {"message": "入力されたタグはすでに使われてます"}
-        return response, 400
-    if user_data["password"] != user_data["pass_confirm"]:
-        response = {"message": "パスワードが一致していません"}
+        error_flag = True
+        message += "入力されたタグはすでに使われています\n"
+    if error_flag:
+        response = {"message": message}
         return response, 400
     if user_data:
         user = User(
@@ -62,7 +64,7 @@ def regist_user():
         return response, 400
 
 
-@device.route("/regist_time", methods=["POST"])
+@device.route("/api/regist_time", methods=["POST"])
 @cross_origin(origins=["http://127.0.0.1:5500"], methods=["POST"])
 def regist_time():
     print("aaa")
