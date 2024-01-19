@@ -84,6 +84,35 @@ def login():
     return response, 400
 
 
+@device.route("/api/get_status", methods=["GET"])
+@jwt_required()
+@cross_origin(origins=["http://127.0.0.1:5500"], methods=["GET"])
+def get_status():
+    state_list = []
+    grade_list = []
+    name_list = []
+    user_list = User.query.order_by(User.grade.desc())  # 学年順
+    for user in user_list:
+        latest_time = (
+            CheckTime.query.filter_by(user_id=int(user.id))
+            .order_by(CheckTime.id.desc())
+            .first()
+        )
+        state_list.append(latest_time.status) if latest_time else state_list.append(6)
+        grade_list.append(user.grade)
+        name_list.append(user.username)
+
+    # データをJSONに変換して返す
+    response = {
+        "user_list": [
+            {"username": name, "grade": grade, "status": status}
+            for name, grade, status in zip(name_list, grade_list, state_list)
+        ]
+    }
+
+    return response, 200
+
+
 @device.route("/api/regist_time", methods=["POST"])
 @cross_origin(origins=["http://127.0.0.1:5500"], methods=["POST"])
 def regist_time():
