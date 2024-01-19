@@ -14,18 +14,21 @@ from flask import (
     Flask,
     jsonify,
     request,
+    make_response,
 )
 from datetime import datetime
 from pytz import timezone
 import time
 from wtforms import ValidationError
+from flask_jwt_extended import (
+    jwt_required,
+    create_access_token,
+    JWTManager,
+    get_jwt_identity,
+)
+
 
 device = Blueprint("device", __name__)
-
-# テスト用
-# @device.route("/registform")
-# def show_form():
-#     return render_template("users/register.html")
 
 
 @device.route("/api/signup", methods=["POST"])
@@ -47,6 +50,7 @@ def signup():
         response = {"message": message}
         return response, 400
     if user_data:
+        token = create_access_token(identity=user_data["email"])
         user = User(
             email=user_data["email"],
             username=user_data["username"],
@@ -57,17 +61,32 @@ def signup():
         )
         db.session.add(user)
         db.session.commit()
-        response = {"message": "ユーザ登録が完了しました"}
+        response = {"message": "ユーザ登録が完了しました", "token": token}
         return response, 200
     else:
         response = {"message": "ユーザ登録に失敗しました"}
         return response, 400
 
 
+@device.route("/api/login", methods=["POST"])
+@cross_origin(origins=["http://127.0.0.1:5500"], methods=["POST"])
+def login():
+    user_data = request.get_json()
+    print(user_data)
+    user = User.query.filter_by(email=user_data["email"]).first()
+    if user is not None:
+        if user.check_password(user_data["password"]):
+            token = create_access_token(identity=user_data["email"])
+            response = {"message": "ログインが完了しました", "token": token}
+            return response, 200
+    message = "ユーザ名かパスワードが間違っています"
+    response = {"message": message}
+    return response, 400
+
+
 @device.route("/api/regist_time", methods=["POST"])
 @cross_origin(origins=["http://127.0.0.1:5500"], methods=["POST"])
 def regist_time():
-    print("aaa")
     time_data = request.get_json()
     print(time_data["nfc_id"])
     user = User.query.filter_by(nfc_id=time_data["nfc_id"]).first()
