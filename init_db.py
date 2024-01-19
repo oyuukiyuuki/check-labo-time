@@ -44,7 +44,7 @@ user3 = User(
     email="okazaki@test.com",
     username="おかざき",
     password="123",
-    administrator="0",
+    administrator="1",
     grade="3",
     nfc_id="333397699",
 )

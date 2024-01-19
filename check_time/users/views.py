@@ -113,33 +113,3 @@ def delete_user(user_id):
     flash("ユーザアカウントが削除されました")
     return redirect(url_for("users.user_maintenance"))
 
-
-# @users.route("/<int:user_id>/user_posts")
-# @login_required
-# def user_posts(user_id):
-#     form = BlogSearchForm()
-
-#     user = User.query.filter_by(id=user_id).first_or_404()
-
-#     # ブログ記事の取得
-#     page = request.args.get("page", 1, type=int)
-#     blog_posts = (
-#         BlogPost.query.filter_by(user_id=user_id)
-#         .order_by(BlogPost.id.desc())
-#         .paginate(page=page, per_page=10)
-#     )
-
-#     # 最新記事の取得
-#     recent_blog_posts = BlogPost.query.order_by(BlogPost.id.desc()).limit(5).all()
-
-#     # カテゴリの取得
-#     blog_categories = BlogCategory.query.order_by(BlogCategory.id.asc()).all()
-
-#     return render_template(
-#         "index.html",
-#         blog_posts=blog_posts,
-#         recent_blog_posts=recent_blog_posts,
-#         blog_categories=blog_categories,
-#         user=user,
-#         form=form,
-#     )
