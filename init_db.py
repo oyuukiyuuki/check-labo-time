@@ -10,7 +10,7 @@ user1 = User(
     username="おおの",
     password="123",
     administrator="1",
-    grade="1",
+    grade=1,
     nfc_id="3333ffff",
 )
 db.session.add(user1)
@@ -27,7 +27,7 @@ user2 = User(
     username="もり",
     password="123",
     administrator="0",
-    grade="2",
+    grade=2,
     nfc_id="44449999",
 )
 db.session.add(user2)
@@ -45,7 +45,7 @@ user3 = User(
     username="おかざき",
     password="123",
     administrator="1",
-    grade="3",
+    grade=3,
     nfc_id="333397699",
 )
 db.session.add(user3)

@@ -18,7 +18,7 @@ class User(db.Model, UserMixin):  # flask_loginの機能を使う為にはUserMi
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     administrator = db.Column(db.String(1))
-    grade = db.Column(db.String(1))
+    grade = db.Column(db.Integer)
     nfc_id = db.Column(db.String(20), unique=True, index=True)
     time = db.relationship("CheckTime", backref="labo_member", lazy="dynamic")  # 1対多
     # post = db.relationship("BlogPost", backref="author", uselist=False)  # 1対1

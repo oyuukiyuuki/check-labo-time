@@ -49,7 +49,7 @@ class UpdataUserForm(FlaskForm):
         "メールアドレス", validators=[DataRequired(), Email(message="正しいメッセージを入力してください")]
     )
     username = StringField("ユーザ名", validators=[DataRequired()])
-    grade = StringField("学年", validators=[DataRequired()])
+    grade = IntegerField("学年", validators=[DataRequired()])
 
     password = PasswordField(
         "パスワード", validators=[EqualTo("pass_confirm", message="パスワードが一致していません")]
