@@ -61,7 +61,7 @@ def signup():
         )
         db.session.add(user)
         db.session.commit()
-        response = {"message": "ユーザ登録が完了しました", "token": token}
+        response = {"message": "ユーザ登録が完了しました", "token": token, "user_id": user.id}
         return response, 200
     else:
         response = {"message": "ユーザ登録に失敗しました"}
@@ -77,7 +77,7 @@ def login():
     if user is not None:
         if user.check_password(user_data["password"]):
             token = create_access_token(identity=user_data["email"])
-            response = {"message": "ログインが完了しました", "token": token}
+            response = {"message": "ログインが完了しました", "token": token, "user_id": user.id}
             return response, 200
     message = "ユーザ名かパスワードが間違っています"
     response = {"message": message}
