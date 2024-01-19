@@ -6,31 +6,22 @@
 {% endblock head %}
 
 {% block content %}
-    <!-- <section id="login">
-        <div class="container my-5">
-            <div class="row">
-                <div class="col-lg-4 col-md-5 col-sm-6 mx-auto">
-                    <div class="card bg-primary text-center">
-                        <div class="card-body text-light">
-                            <h3>ログイン</h3>
-                            <form method="POST">
-                                {{ form.hidden_tag() }}
-                                <div class="mb-3">
-                                    {{ render_field(form.email, class='form-control form-control-lg', placeholder='メールアドレス') }}
-                                </div>
-                                <div class="mb-3">
-                                    {{ render_field(form.password, class='form-control form-control-lg', placeholder='パスワード') }}
-                                </div>
-                                {{ form.submit(class="btn btn-outline-light w-100 ", value='ログイン') }}
-                            </form>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+{% if current_user.is_administrator() %}
+  <section id="menu">
+    <div class="container my-3 py-4 ">
+      <div class="row">
+        <div class="col-md-4">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#del_Modal">
+            削除
+          </button>
         </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
 
-    </section> -->
 
 
     <main class="form-signin w-100 m-auto">
@@ -77,5 +68,26 @@
 
         {% endfor %}
       </main>
+
+        <!-- Modal -->
+  <div class="modal fade" id="del_Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">削除確認</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          このユーザーを削除しますか？
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <form action="{{ url_for('users.delete_user', user_id=form.id)}}" method="POST">
+            <input type="submit" class="btn btn-danger" value="削除">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
     
 {% endblock content %}
