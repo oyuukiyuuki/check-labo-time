@@ -19,8 +19,8 @@ if uri:
         uri = uri.replace("postgres://", "postgresql://", 1)
         app.config["SQLALCHEMY_DATABASE_URI"] = uri
 else:
-    # app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:0Y1u1u2ki@localhost"
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_DATABASE_URI")
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
