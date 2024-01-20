@@ -113,6 +113,58 @@ def get_status():
     return response, 200
 
 
+@device.route("/api/me/check_times", methods=["GET"])
+@jwt_required()
+@cross_origin(origins=["http://127.0.0.1:5500"], methods=["GET"])
+def get_my_times():
+    email = get_jwt_identity()
+    user = User.query.filter_by(email=email).first()
+    page = request.args.get("offset", 1, type=int)
+    per_page = request.args.get("limit", 10, type=int)
+
+    times = (
+        CheckTime.query.filter_by(user_id=int(user.id))
+        .order_by(CheckTime.id.desc())
+        .paginate(page=page, per_page=per_page)
+    )
+
+    times = times.items
+
+    full_url = request.url
+
+    try:
+        next_times = (
+            CheckTime.query.filter_by(user_id=int(user.id))
+            .order_by(CheckTime.id.desc())
+            .paginate(page=page + 1, per_page=per_page)
+        )
+    except Exception as e:
+        next_times = None
+
+    if next_times:
+        next_url = full_url.replace("offset=" + str(page), "offset=" + str(page + 1))
+    else:
+        next_url = None
+
+    response = {
+        "check_times": [
+            {
+                "in_time": time.in_time.isoformat().split(".")[0] + "+09:00"
+                if time.in_time
+                else None,
+                "out_time": time.out_time.isoformat().split(".")[0] + "+09:00"
+                if time.out_time
+                else None,
+                "status": time.status,
+                "id": time.id,
+            }
+            for time in times
+        ],
+        "next": next_url,
+    }
+    return response, 200
+
+
 @device.route("/api/regist_time", methods=["POST"])
 @cross_origin(origins=["http://127.0.0.1:5500"], methods=["POST"])
 def regist_time():
