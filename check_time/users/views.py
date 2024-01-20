@@ -3,6 +3,7 @@ from check_time.models import User, CheckTime
 from check_time.users.forms import LoginForm, RegistrationForm, UpdataUserForm
 from flask_login import current_user, login_required, login_user, logout_user
 from pytz import timezone
+from flask_sqlalchemy import SQLAlchemy
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from datetime import datetime
@@ -108,7 +109,10 @@ def delete_user(user_id):
     if user.is_administrator():
         flash("管理者は削除できません")
         return redirect(url_for("users.account", user_id=user_id))
+    check_times_to_delete = CheckTime.query.filter_by(user_id=user_id).all()
+    for check_time in check_times_to_delete:
+        db.session.delete(check_time)
     db.session.delete(user)
     db.session.commit()
-    flash("ユーザアカウントが削除されました")
+    flash("ユーザアカウントと時間に関する情報が削除されました")
     return redirect(url_for("users.user_maintenance"))

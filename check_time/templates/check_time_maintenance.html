@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <header id="page-header">
+        <div class="container my-3 py-3 bg-light">
+            <div class="row">
+                    <h1 class="text-center">入退室時間管理</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="list">
+        <div class="container my-3">
+            <div class="row justify-content-md-center">
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-striped text-nowrap">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <!-- <th>ID</th> -->
+                                        <th>管理ID</th>
+                                        <th>入室時間</th>
+                                        <th>退室時間</th>
+                                        <th>状態</th>
+                                        <th>編集</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for check_time in check_times.items %}
+                                    <tr>
+                                        <td>{{ check_time.id}}</td>
+                                        <td>{{ check_time.in_time  }}</td>
+                                        <td>{{ check_time.out_time }}</td>
+                                        <td>{{ check_time.status }}</td>
+                                        <td>
+                                            <a href="{{ url_for('main.check_time_edit', check_time_id=check_time.id) }}" class="btn btn-secondary">
+                                            編集
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>    
+                    </div>
+                </div>
+                <div class="row justify-content-end">
+                    <div class="col-3">
+                        <nav class="my-2" aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li {% if check_times.has_prev %}class="page-item"{% else %} class="page-item disabled"{% endif %}><a class="page-link" href="{% if check_times.has_prev %}{{ url_for('main.check_time_maintenance', page=check_times.prev_num) }}{% else %}#{% endif %}">前へ</a></li>
+        
+                        
+                            {% for page_num in check_times.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}  
+                                {% if page_num %}
+                                    {% if check_times.page == page_num %}
+                                        <li class="page-item disabled"><a class="page-link" href="#">{{ page_num }}</a></li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link" href="{{ url_for('main.check_time_maintenance', page=page_num) }}">{{ page_num }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link" href="#">&hellip;</a></li>
+                                {% endif %}
+                            {% endfor %}
+        
+                            <li {% if check_times.has_next %}class="page-item"{% else %} class="page-item disabled"{% endif %}><a class="page-link" href="{% if check_times.has_next %}{{ url_for('main.check_time_maintenance', page=check_times.next_num) }}{% else %}#{% endif %}">次へ</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+{% endblock %}
