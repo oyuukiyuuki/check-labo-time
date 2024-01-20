@@ -16,7 +16,7 @@ from flask import (
     request,
     make_response,
 )
-from datetime import datetime
+from datetime import datetime, timedelta
 from pytz import timezone
 import time
 from wtforms import ValidationError
@@ -26,6 +26,7 @@ from flask_jwt_extended import (
     JWTManager,
     get_jwt_identity,
 )
+from sqlalchemy import func
 
 
 device = Blueprint("device", __name__)
@@ -88,9 +89,13 @@ def login():
 @jwt_required()
 @cross_origin(origins=["http://127.0.0.1:5500"], methods=["GET"])
 def get_status():
+    today = datetime.now().date()
     state_list = []
     grade_list = []
     name_list = []
+    time_today_list = []
+    time_week_list = []
+    time_month_list = []
     user_list = User.query.order_by(User.grade.desc())  # 学年順
     for user in user_list:
         latest_time = (
@@ -102,11 +107,75 @@ def get_status():
         grade_list.append(user.grade)
         name_list.append(user.username)
 
+        # 今日の時間の合計を取得
+        time_today = (
+            db.session.query(func.sum(CheckTime.out_time - CheckTime.in_time))
+            .filter(
+                CheckTime.user_id == user.id,
+                CheckTime.in_time >= today,
+                CheckTime.in_time < today + timedelta(days=1),
+            )
+            .scalar()
+        )
+
+        # 今週の時間の合計を取得（月曜日から日曜日までを1週間とする）
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=7)
+        time_week = (
+            db.session.query(func.sum(CheckTime.out_time - CheckTime.in_time))
+            .filter(
+                CheckTime.user_id == user.id,
+                CheckTime.in_time >= start_of_week,
+                CheckTime.in_time < end_of_week,
+            )
+            .scalar()
+        )
+
+        # 今月の時間の合計を取得
+        start_of_month = datetime(today.year, today.month, 1)
+        end_of_month = (
+            datetime(today.year, today.month + 1, 1)
+            if today.month < 12
+            else datetime(today.year + 1, 1, 1)
+        )
+        time_month = (
+            db.session.query(func.sum(CheckTime.out_time - CheckTime.in_time))
+            .filter(
+                CheckTime.user_id == user.id,
+                CheckTime.in_time >= start_of_month,
+                CheckTime.in_time < end_of_month,
+            )
+            .scalar()
+        )
+
+        time_today_list.append(
+            int(time_today.total_seconds() // 60)
+        ) if time_today else time_today_list.append(0)
+        time_week_list.append(
+            int(time_week.total_seconds() // 60)
+        ) if time_week else time_week_list.append(0)
+        time_month_list.append(
+            int(time_month.total_seconds() // 60)
+        ) if time_month else time_month_list.append(0)
     # データをJSONに変換して返す
     response = {
         "user_list": [
-            {"username": name, "grade": grade, "status": status}
-            for name, grade, status in zip(name_list, grade_list, state_list)
+            {
+                "username": name,
+                "grade": grade,
+                "status": status,
+                "time_today": time_today,
+                "time_week": time_week,
+                "time_month": time_month,
+            }
+            for name, grade, status, time_today, time_week, time_month in zip(
+                name_list,
+                grade_list,
+                state_list,
+                time_today_list,
+                time_week_list,
+                time_month_list,
+            )
         ]
     }
 
@@ -176,14 +245,18 @@ def regist_time():
         CheckTime.query.filter_by(user_id=user.id).order_by(CheckTime.id.desc()).first()
     )
     if check_time is None:
-        in_time = CheckTime(
-            user_id=user.id,
-            in_time=datetime.now(timezone("Asia/Tokyo")),
-        )
-        db.session.add(in_time)
-        db.session.commit()
-        response = {"message": "頑張ってください"}
-        return response, 200
+        if time_data["status"] == 0:
+            in_time = CheckTime(
+                user_id=user.id,
+                in_time=datetime.now(timezone("Asia/Tokyo")),
+            )
+            db.session.add(in_time)
+            db.session.commit()
+            response = {"message": "頑張ってください"}
+            return response, 200
+        else:
+            response = {"message": "前回の退室時間が記録されていません"}
+            return response, 400
     else:
         if time_data["status"] > 0:
             if check_time.out_time is None:
