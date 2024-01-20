@@ -246,7 +246,9 @@ def regist_time():
         if time_data["status"] == 0:
             in_time = CheckTime(
                 user_id=user.id,
-                in_time=datetime.now(timezone("Asia/Tokyo")),
+                in_time=datetime.now(timezone("Asia/Tokyo")).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
             )
             db.session.add(in_time)
             db.session.commit()
@@ -258,7 +260,9 @@ def regist_time():
     else:
         if time_data["status"] > 0:
             if check_time.out_time is None:
-                check_time.out_time = datetime.now(timezone("Asia/Tokyo"))
+                check_time.out_time = datetime.now(timezone("Asia/Tokyo")).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
                 check_time.status = time_data["status"]
                 db.session.add(check_time)
                 db.session.commit()
@@ -274,7 +278,9 @@ def regist_time():
             else:
                 in_time = CheckTime(
                     user_id=user.id,
-                    in_time=datetime.now(timezone("Asia/Tokyo")),
+                    in_time=datetime.now(timezone("Asia/Tokyo")).strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
                 )
                 db.session.add(in_time)
                 db.session.commit()
