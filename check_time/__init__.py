@@ -41,7 +41,7 @@ login_manager.localize_callback = localize_callback
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")  # JWTに署名する際の秘密鍵
 app.config["JWT_ALGORITHM"] = "HS256"  # 暗号化署名のアルゴリズム
 app.config["JWT_LEEWAY"] = 0  # 有効期限に対する余裕時間
-app.config["JWT_EXPIRATION_DELTA"] = timedelta(days=30)  # トークンの有効期間を30日に設定
+app.config["JWT_EXPIRATION_DELTA"] = timedelta(days=30)
 app.config["JWT_NOT_BEFORE_DELTA"] = timedelta(seconds=0)  # トークンの使用を開始する相対時間
 
 
