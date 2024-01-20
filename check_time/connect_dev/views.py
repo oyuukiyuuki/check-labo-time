@@ -51,7 +51,9 @@ def signup():
         response = {"message": message}
         return response, 400
     if user_data:
-        token = create_access_token(identity=user_data["email"])
+        token = create_access_token(
+            identity=user_data["email"], expires_delta=timedelta(days=30)
+        )
         user = User(
             email=user_data["email"],
             username=user_data["username"],
@@ -77,7 +79,9 @@ def login():
     user = User.query.filter_by(email=user_data["email"]).first()
     if user is not None:
         if user.check_password(user_data["password"]):
-            token = create_access_token(identity=user_data["email"])
+            token = create_access_token(
+                identity=user_data["email"], expires_delta=timedelta(days=30)
+            )
             response = {"message": "ログインが完了しました", "token": token, "user_id": user.id}
             return response, 200
     message = "ユーザ名かパスワードが間違っています"
