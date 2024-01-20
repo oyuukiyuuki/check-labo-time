@@ -199,8 +199,6 @@ def get_my_times():
 
     times = times.items
 
-    full_url = request.url
-
     try:
         next_times = (
             CheckTime.query.filter_by(user_id=int(user.id))
@@ -211,9 +209,9 @@ def get_my_times():
         next_times = None
 
     if next_times:
-        next_url = full_url.replace("offset=" + str(page), "offset=" + str(page + 1))
+        next_page = page + 1
     else:
-        next_url = None
+        next_page = None
 
     response = {
         "check_times": [
@@ -229,7 +227,7 @@ def get_my_times():
             }
             for time in times
         ],
-        "next": next_url,
+        "next": next_page,
     }
     return response, 200
 
