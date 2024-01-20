@@ -112,4 +112,3 @@ def delete_user(user_id):
     db.session.commit()
     flash("ユーザアカウントが削除されました")
     return redirect(url_for("users.user_maintenance"))
-
