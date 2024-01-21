@@ -33,29 +33,29 @@ from sqlalchemy import func, cast, Interval, extract
 device = Blueprint("device", __name__)
 
 
-def send_push_notification(name, status):
-    url = "https://api.sandbox.push.apple.com:443/3/device/c7f02482aa5669564a954d768d16c3ccf4cfe19e78df5ebc623a0a681277caf4"
-    # リクエストヘッダーの取得
-    headers = {
-        "content-type": "application/json",
-        "authorization": "bearer MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgc5dBLvP7AxJJ40UtRTHK6ntdg7MSTPAX2wgMMzU4YmCgCgYIKoZIzj0DAQehRANCAAQiQ9ojgkUc1A31yWUQRuiI+EGhMN2BEzu4mO1vTPBBE3CI/l0M/Acn1AB4pE7PmrHHIH8yYmn3gCcpyrbrtss",
-        ":method": "POST",
-        ":scheme": "https",
-        "apns-push-type": "alert",
-        "apns-expiration": "0",
-        "apns-priority": "10",
-        "apns-topic": "com.YukiMori.LabMate",
-    }
-    payload = {
-        "aps": {
-            "alert": {"title": "Lab Meter", "body": f"{name}が{status}しました"},
-            "sound": "default",
-        }
-    }
+# def send_push_notification(name, status):
+#     url = "https://api.sandbox.push.apple.com:443/3/device/c7f02482aa5669564a954d768d16c3ccf4cfe19e78df5ebc623a0a681277caf4"
+#     # リクエストヘッダーの取得
+#     headers = {
+#         "content-type": "application/json",
+#         "authorization": "bearer MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgc5dBLvP7AxJJ40UtRTHK6ntdg7MSTPAX2wgMMzU4YmCgCgYIKoZIzj0DAQehRANCAAQiQ9ojgkUc1A31yWUQRuiI+EGhMN2BEzu4mO1vTPBBE3CI/l0M/Acn1AB4pE7PmrHHIH8yYmn3gCcpyrbrtss",
+#         ":method": "POST",
+#         ":scheme": "https",
+#         "apns-push-type": "alert",
+#         "apns-expiration": "0",
+#         "apns-priority": "10",
+#         "apns-topic": "com.YukiMori.LabMate",
+#     }
+#     payload = {
+#         "aps": {
+#             "alert": {"title": "Lab Meter", "body": f"{name}が{status}しました"},
+#             "sound": "default",
+#         }
+#     }
 
-    response = requests.post(url, headers=headers, json=payload)
-    print(response.status_code)
-    print(response.text)
+#     response = requests.post(url, headers=headers, json=payload)
+#     print(response.status_code)
+#     print(response.text)
 
 
 @device.route("/api/signup", methods=["POST"])
@@ -348,7 +348,7 @@ def regist_time():
             )
             db.session.add(in_time)
             db.session.commit()
-            send_push_notification(user.username, "入室")
+            # send_push_notification(user.username, "入室")
             response = {"message": "頑張ってください"}
             return response, 200
         else:
@@ -363,7 +363,7 @@ def regist_time():
                 check_time.status = time_data["status"]
                 db.session.add(check_time)
                 db.session.commit()
-                send_push_notification(user.username, "退室")
+                # send_push_notification(user.username, "退室")
                 response = {"message": "お疲れ様です"}
                 return response, 200
             else:
@@ -382,6 +382,6 @@ def regist_time():
                 )
                 db.session.add(in_time)
                 db.session.commit()
-                send_push_notification(user.username, "入室")
+                # send_push_notification(user.username, "入室")
                 response = {"message": "頑張ってください"}
                 return response, 200
