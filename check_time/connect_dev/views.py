@@ -26,7 +26,7 @@ from flask_jwt_extended import (
     JWTManager,
     get_jwt_identity,
 )
-from sqlalchemy import func, cast, Interval
+from sqlalchemy import func, cast, Interval, extract
 
 
 device = Blueprint("device", __name__)
@@ -133,7 +133,7 @@ def get_status():
         grade_list.append(user.grade)
         name_list.append(user.username)
 
-        # # 今日の時間の合計を取得
+        # 今日の時間の合計を取得　もとの
         # time_today = (
         #     db.session.query(func.sum(CheckTime.out_time - CheckTime.in_time))
         #     .filter(
@@ -146,15 +146,14 @@ def get_status():
 
         time_today = (
             db.session.query(
-                func.coalesce(
-                    func.sum(
-                        cast(
-                            func.coalesce(CheckTime.out_time, func.now())
-                            - CheckTime.in_time,
-                            Interval,
+                func.sum(
+                    func.coalesce(
+                        CheckTime.out_time,
+                        datetime.now(timezone("Asia/Tokyo")).strftime(
+                            "%Y-%m-%d %H:%M:%S"
                         ),
-                    ),
-                    timedelta(seconds=0),
+                    )
+                    - CheckTime.in_time
                 )
             )
             .filter(
@@ -170,15 +169,14 @@ def get_status():
         end_of_week = start_of_week + timedelta(days=7)
         time_week = (
             db.session.query(
-                func.coalesce(
-                    func.sum(
-                        cast(
-                            func.coalesce(CheckTime.out_time, func.now())
-                            - CheckTime.in_time,
-                            Interval,
+                func.sum(
+                    func.coalesce(
+                        CheckTime.out_time,
+                        datetime.now(timezone("Asia/Tokyo")).strftime(
+                            "%Y-%m-%d %H:%M:%S"
                         ),
-                    ),
-                    timedelta(seconds=0),
+                    )
+                    - CheckTime.in_time
                 )
             )
             .filter(
@@ -198,15 +196,14 @@ def get_status():
         )
         time_month = (
             db.session.query(
-                func.coalesce(
-                    func.sum(
-                        cast(
-                            func.coalesce(CheckTime.out_time, func.now())
-                            - CheckTime.in_time,
-                            Interval,
+                func.sum(
+                    func.coalesce(
+                        CheckTime.out_time,
+                        datetime.now(timezone("Asia/Tokyo")).strftime(
+                            "%Y-%m-%d %H:%M:%S"
                         ),
-                    ),
-                    timedelta(seconds=0),
+                    )
+                    - CheckTime.in_time
                 )
             )
             .filter(
@@ -226,6 +223,7 @@ def get_status():
         time_month_list.append(
             int(time_month.total_seconds() // 60)
         ) if time_month else time_month_list.append(0)
+
     # データをJSONに変換して返す
     response = {
         "user_list": [
