@@ -35,15 +35,17 @@ device = Blueprint("device", __name__)
 
 def send_push_notification(name, status):
     url = "https://api.sandbox.push.apple.com:443/3/device/c7f02482aa5669564a954d768d16c3ccf4cfe19e78df5ebc623a0a681277caf4"
+    # リクエストヘッダーの取得
     headers = {
-        "Authorization": "bearer MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgc5dBLvP7AxJJ40UtRTHK6ntdg7MSTPAX2wgMMzU4YmCgCgYIKoZIzj0DAQehRANCAAQiQ9ojgkUc1A31yWUQRuiI+EGhMN2BEzu4mO1vTPBBE3CI/l0M/Acn1AB4pE7PmrHHIH8yYmn3gCcpyrbrtssz",
+        "content-type": "application/json",
+        "authorization": "bearer MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgc5dBLvP7AxJJ40UtRTHK6ntdg7MSTPAX2wgMMzU4YmCgCgYIKoZIzj0DAQehRANCAAQiQ9ojgkUc1A31yWUQRuiI+EGhMN2BEzu4mO1vTPBBE3CI/l0M/Acn1AB4pE7PmrHHIH8yYmn3gCcpyrbrtss",
+        ":method": "POST",
+        ":scheme": "https",
         "apns-push-type": "alert",
         "apns-expiration": "0",
         "apns-priority": "10",
         "apns-topic": "com.YukiMori.LabMate",
-        "Content-Type": "application/json",
     }
-
     payload = {
         "aps": {
             "alert": {"title": "Lab Meter", "body": f"{name}が{status}しました"},
