@@ -40,7 +40,7 @@ def send_push_notification(name, status):
         "apns-push-type": "alert",
         "apns-expiration": "0",
         "apns-priority": "10",
-        "apns-topic": "com.example.MyApp",
+        "apns-topic": "com.YukiMori.LabMate",
         "Content-Type": "application/json",
     }
 
@@ -52,7 +52,6 @@ def send_push_notification(name, status):
     }
 
     response = requests.post(url, headers=headers, json=payload)
-    print(response.text)
 
 
 @device.route("/api/signup", methods=["POST"])
@@ -345,7 +344,9 @@ def regist_time():
             )
             db.session.add(in_time)
             db.session.commit()
-            send_push_notification(user.username, "入室")
+            print(str(user.username))
+            print("------------------------------------")
+            send_push_notification(str(user.username), "入室")
             response = {"message": "頑張ってください"}
             return response, 200
         else:
