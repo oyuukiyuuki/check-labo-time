@@ -89,6 +89,28 @@ def login():
     return response, 400
 
 
+@device.route("/api/change_nfc", methods=["POST"])
+@cross_origin(origins=["http://127.0.0.1:5500"], methods=["POST"])
+def change_nfc():
+    user_data = request.get_json()
+    print(user_data)
+    user = User.query.filter_by(email=user_data["email"]).first()
+    if user is not None:
+        if user.check_password(user_data["password"]):
+            user.nfc_id = user_data["nfc_id"]
+            db.session.commit()
+            response = {"message": "NFCタグの更新が完了しました"}
+            return response, 200
+        else:
+            message = "ユーザ名かパスワードが間違っています"
+            response = {"message": message}
+            return response, 400
+    else:
+        message = "ユーザ名かパスワードが間違っています"
+        response = {"message": message}
+        return response, 400
+
+
 @device.route("/api/get_status", methods=["GET"])
 @jwt_required()
 @cross_origin(origins=["http://127.0.0.1:5500"], methods=["GET"])
@@ -243,6 +265,9 @@ def regist_time():
     print(time_data["nfc_id"])
     user = User.query.filter_by(nfc_id=time_data["nfc_id"]).first()
     print(user)
+    if user is None:
+        response = {"message": "登録されていないNFCタグです"}
+        return response, 400
     check_time = (
         CheckTime.query.filter_by(user_id=user.id).order_by(CheckTime.id.desc()).first()
     )
