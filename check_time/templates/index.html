@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block head %}
+
+{% endblock head %}
+
+{% block content %}
+
+<div class="container my-3 mt-5">
+    <div class="row mb-2 mt-5">
+        <div class="col-md-7 ">
+            <section id="ranking">
+                <div class="row">
+                    <div class="center-block mx-auto">
+                        <h3 class="text-center">研究室滞在時間ランキング</h3>
+                        <table class="table table-bordered table-striped mx-auto mt-5">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Rank</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Stay Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rank, check_time, duration in rankings %}
+                                    <tr {% if rank == 1 %}class="#"{% endif %}>
+                                        <th {% if rank == 1 %} style="font-size: 1.4em;"{% endif %} scope="row">{{ rank }}</th>
+                                        <td {% if rank == 1 %} style="font-size: 1.4em;"{% endif %}>{{ check_time }}</td>
+                                        <td {% if rank == 1 %} style="font-size: 1.4em;"{% endif %}>{{ duration }}   {% if rank == 1 %} <span class="badge " style="font-size: 1.4em; float: right;">👑</span>{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="mx-auto mt-5" style="width:600px;">
+                            <ul class="nav nav-pills nav-fill bg-primary rounded-5 shadow-sm" id="pillNav2" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active rounded-5" id="home-tab2" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">Date</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-5" id="profile-tab2" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Weekly</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-5" id="contact-tab2" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Monthly</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+          </div>
+          <div class="col-md-1">
+            <!-- 中央の空白（1列分） -->
+          </div>
+          <div class="col-md-4 justify-content-end">
+            <div class="position-sticky" style="top:2rem;">
+                <!-- 会社情報 -->
+                <div class="p-4 mb-2 bg-light">
+                    <h4 class="fst-italic">研究室情報</h4>
+                    <p>情報通信技術の発展によって大量のデータが容易に取得できるようになりました．また，それに伴い，人工知能，ビッグデータ分析，分散計算，ネットワーク分析などの研究分野の重要性も高まっています．本研究室では，機械学習分野に現れる様々な最適化問題の効率的解法，マルチエージェントシステムによる分散計算法，ネットワーク科学に関する研究を行っています．具体的なテーマとその内容については<a href="http://www.momo.cs.okayama-u.ac.jp/~takahashi/research.ja.html">研究テーマ</a>をご覧ください．</p>
+                </div>
+                <!-- 最新記事 -->
+                <div class="p-4">
+                    <h4 class="fst-italic">RECENT POST <span class="ms-2 fs-6">最新記事</span></h4>
+                    <hr>
+                    <ol class="list-unstyled">
+                        <li>
+                          <a href="http://www.momo.cs.okayama-u.ac.jp/~takahashi/misc.ja.html" class="text-decoration-none">
+                            <span>ナップサック問題は解きやすい?</span>
+                          </a>
+                        </li>
+                        <hr>
+                    </ol>
+
+
+            </div>
+        </div>
+
+          </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -8,6 +8,10 @@ from flask_login import current_user, login_required, login_user, logout_user
 from pytz import timezone
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import func
+from datetime import datetime
+
 
 main = Blueprint("main", __name__)
 
@@ -74,6 +78,58 @@ def delete_check_time(check_time_id):
 
     flash('入退室情報が削除されました')
     return redirect(url_for('main.check_time_maintenance', user_id = current_user.id))
+
+# def calculate_stay_duration(check_time):
+#     if check_time.out_time is not None:
+#         return check_time.out_time - check_time.in_time
+#     else:
+#         return datetime.now() - check_time.in_time
+
+
+# @main.route('/ranking')
+# def ranking():
+#     check_times = CheckTime.query.all()
+#     stay_durations = [(check_time, calculate_stay_duration(check_time)) for check_time in check_times]
+#     sorted_stay_durations = sorted(stay_durations, key=lambda x: x[1], reverse=True)
+
+#     # ランキングをリストに変換
+#     ranking_list = [(rank, check_time, duration) for rank, (check_time, duration) in enumerate(sorted_stay_durations, start=1)]
+
+#     return render_template('index.html', rankings=ranking_list)
+
+from datetime import datetime
+from flask import render_template
+from sqlalchemy import func
+
+# CheckTimeモデルが'user_id'という列を持っていることを仮定します。
+# 実際の列名が異なる場合は、それに合わせて変更してください。
+from datetime import datetime
+from flask import render_template
+from sqlalchemy import func
+
+# CheckTimeモデルが'user_id'という列を持っていること、
+# またUserモデルが'id'と'username'を持っていることを仮定します。
+# 実際の列名が異なる場合は、それに合わせて変更してください。
+
+@main.route('/ranking')
+def ranking():
+    user_stay_durations = (
+        db.session.query(
+            User.username,
+            func.sum(func.coalesce(CheckTime.out_time, datetime.now()) - CheckTime.in_time).label('total_duration')
+        )
+        .join(CheckTime, User.id == CheckTime.user_id)  # テーブルを結合
+        .group_by(User.id, User.username)
+        .all()
+    )
+
+    sorted_user_stay_durations = sorted(user_stay_durations, key=lambda x: x.total_duration, reverse=True)
+
+    # ランキングリストの作成
+    ranking_list = [(rank, username, total_duration) for rank, (username, total_duration) in enumerate(sorted_user_stay_durations, start=1)]
+
+    return render_template('index.html', rankings=ranking_list)
+
 
 
 
