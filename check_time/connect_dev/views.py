@@ -26,7 +26,7 @@ from flask_jwt_extended import (
     JWTManager,
     get_jwt_identity,
 )
-from sqlalchemy import func
+from sqlalchemy import func, cast, Interval
 
 
 device = Blueprint("device", __name__)
@@ -112,7 +112,7 @@ def change_nfc():
 
 
 @device.route("/api/get_status", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 @cross_origin(origins=["http://127.0.0.1:5500"], methods=["GET"])
 def get_status():
     today = datetime.now().date()
@@ -133,9 +133,30 @@ def get_status():
         grade_list.append(user.grade)
         name_list.append(user.username)
 
-        # 今日の時間の合計を取得
+        # # 今日の時間の合計を取得
+        # time_today = (
+        #     db.session.query(func.sum(CheckTime.out_time - CheckTime.in_time))
+        #     .filter(
+        #         CheckTime.user_id == user.id,
+        #         CheckTime.in_time >= today,
+        #         CheckTime.in_time < today + timedelta(days=1),
+        #     )
+        #     .scalar()
+        # )
+
         time_today = (
-            db.session.query(func.sum(CheckTime.out_time - CheckTime.in_time))
+            db.session.query(
+                func.coalesce(
+                    func.sum(
+                        cast(
+                            func.coalesce(CheckTime.out_time, func.now())
+                            - CheckTime.in_time,
+                            Interval,
+                        ),
+                    ),
+                    timedelta(seconds=0),
+                )
+            )
             .filter(
                 CheckTime.user_id == user.id,
                 CheckTime.in_time >= today,
@@ -148,7 +169,18 @@ def get_status():
         start_of_week = today - timedelta(days=today.weekday())
         end_of_week = start_of_week + timedelta(days=7)
         time_week = (
-            db.session.query(func.sum(CheckTime.out_time - CheckTime.in_time))
+            db.session.query(
+                func.coalesce(
+                    func.sum(
+                        cast(
+                            func.coalesce(CheckTime.out_time, func.now())
+                            - CheckTime.in_time,
+                            Interval,
+                        ),
+                    ),
+                    timedelta(seconds=0),
+                )
+            )
             .filter(
                 CheckTime.user_id == user.id,
                 CheckTime.in_time >= start_of_week,
@@ -165,7 +197,18 @@ def get_status():
             else datetime(today.year + 1, 1, 1)
         )
         time_month = (
-            db.session.query(func.sum(CheckTime.out_time - CheckTime.in_time))
+            db.session.query(
+                func.coalesce(
+                    func.sum(
+                        cast(
+                            func.coalesce(CheckTime.out_time, func.now())
+                            - CheckTime.in_time,
+                            Interval,
+                        ),
+                    ),
+                    timedelta(seconds=0),
+                )
+            )
             .filter(
                 CheckTime.user_id == user.id,
                 CheckTime.in_time >= start_of_month,
