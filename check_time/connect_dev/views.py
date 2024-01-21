@@ -344,9 +344,7 @@ def regist_time():
             )
             db.session.add(in_time)
             db.session.commit()
-            print(str(user.username))
-            print("------------------------------------")
-            send_push_notification(str(user.username), "入室")
+            send_push_notification(user.username, "入室")
             response = {"message": "頑張ってください"}
             return response, 200
         else:
