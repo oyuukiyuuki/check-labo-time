@@ -52,6 +52,8 @@ def send_push_notification(name, status):
     }
 
     response = requests.post(url, headers=headers, json=payload)
+    print(response.status_code)
+    print(response.text)
 
 
 @device.route("/api/signup", methods=["POST"])
